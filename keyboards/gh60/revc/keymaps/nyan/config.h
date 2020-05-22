@@ -19,6 +19,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "config_common.h"
 
+#define AUTO_SHIFT_TIMEOUT 180
+// #define NO_AUTO_SHIFT_SPECIAL
+
+#define LEADER_TIMEOUT 250
+#define LEADER_PER_KEY_TIMING
+
 /* USB Device descriptor parameter */
 #define VENDOR_ID    0x4335 // GEEKhack
 #define PRODUCT_ID   0x0001
