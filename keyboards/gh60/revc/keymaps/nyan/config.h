@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define AUTO_SHIFT_TIMEOUT 180
 // #define NO_AUTO_SHIFT_SPECIAL
 
-#define LEADER_TIMEOUT 250
+#define LEADER_TIMEOUT 500
 #define LEADER_PER_KEY_TIMING
 
 /* USB Device descriptor parameter */
