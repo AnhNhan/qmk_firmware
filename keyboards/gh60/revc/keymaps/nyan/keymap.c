@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "version.h"
 #define ______ KC_TRNS
 
 #define _DEFAULT 0
@@ -50,8 +51,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[_DEFAULT] = LAYOUT_all(
         KC_GESC,      KC_1,    KC_2,    KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,       KC_0,     KC_MINS,  TD(CT_EQL), TD(CT_BSLS),    KC_GRV, \
     LT(_FN2, KC_TAB), KC_Q,    KC_W,    KC_E,     KC_R,     KC_T,     KC_Z,     KC_U,     KC_I,     KC_O,       KC_P, TD(CT_LBRC), TD(CT_RBRC),     KC_BSPC, \
-        MO(_FN),      KC_A,    KC_S,    KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L, TD(CT_CLN), TD(CT_QUOT),   TG(_WASD),   KC_SFTENT, \
-        KC_LSPO,   KC_LCTL,    KC_Y,    KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,     KC_SLSH,     KC_RSPC,     KC_LEAD, \
+        MO(_FN),      KC_A,    KC_S,    KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L, TD(CT_CLN), TD(CT_QUOT),     KC_LEAD,   KC_SFTENT, \
+        KC_LSPO,   KC_LCTL,    KC_Y,    KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,     KC_SLSH,     KC_RSPC,   TG(_WASD), \
         KC_LCTL,   KC_LGUI, KC_LALT,                      KC_SPC,                                   KC_RALT, KC_RGUI,      KC_APP,      KC_RCTL),
 	[_FN] = LAYOUT_all(
         KC_GESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,   KC_F10,   KC_F11,   KC_F12,   ______,   ______, \
@@ -286,12 +287,100 @@ void matrix_scan_user(void) {
         leading = false;
         leader_end();
 
+        // My own actual leader sequences
+
+        // T+R => Ctrl+Shift+T - re-open closed tab
+        SEQ_TWO_KEYS(KC_T, KC_R) {
+            SEND_STRING(SS_LCTRL(SS_LSFT("t")));
+        }
+        // N+N => Ctrl+Shift+N - open a new window
+        SEQ_TWO_KEYS(KC_N, KC_N) {
+            SEND_STRING(SS_LCTRL(SS_LSFT("n")));
+        }
+        // W+Q => Esc+:wq - quit vim
+        SEQ_TWO_KEYS(KC_N, KC_N) {
+            register_code(KC_ESC);
+            unregister_code(KC_ESC);
+            SEND_STRING(":wq");
+        }
+        SEQ_ONE_KEY(KC_F) { SEND_STRING(SS_LCTL("akf")); } // Select all and format
+        // D+D => select all + copy
+        SEQ_TWO_KEYS(KC_D, KC_D) {
+            SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
+        }
+        // reset keyboard to bootloader
+        SEQ_FIVE_KEYS(KC_R, KC_E, KC_S, KC_E, KC_T) {
+            reset_keyboard();
+        }
+        //tableflip (LEADER - TF)
+        SEQ_TWO_KEYS(KC_T, KC_F) {
+            unicode_input_start();
+
+            register_hex(0x0028);
+            register_hex(0x30ce);
+            register_hex(0x0ca0);
+            register_hex(0x75ca);
+            register_hex(0x0ca0);
+            register_hex(0x0029);
+            register_hex(0x30ce);
+            register_hex(0x5f61);
+            register_hex(0x253b);
+            register_hex(0x2501);
+            register_hex(0x253b);
+
+            unicode_input_finish();
+        }
+        SEQ_ONE_KEY(KC_B) {
+            SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION " ");
+            tap_code16(KC_ENTER);
+            SEND_STRING ("Built at: " QMK_BUILDDATE);
+        }
+        SEQ_TWO_KEYS(KC_G, KC_P) {
+            SEND_STRING("git push");
+        }
+        SEQ_THREE_KEYS(KC_G, KC_F, KC_P) {
+            SEND_STRING("git push --force-with-lease");
+        }
+        SEQ_ONE_KEY (KC_1) {
+            // ¯\_(ツ)_/¯
+            unicode_input_start(); register_hex(0xaf); unicode_input_finish();
+            register_code (KC_RALT); tap_code16 (KC_MINS); unregister_code (KC_RALT);
+            register_code (KC_RSFT); tap_code16 (KC_8); unregister_code (KC_RSFT);
+            unicode_input_start (); register_hex(0x30c4); unicode_input_finish();
+            register_code (KC_RSFT); tap_code16 (KC_9); tap_code16(KC_7); unregister_code (KC_RSFT);
+            unicode_input_start (); register_hex(0xaf); unicode_input_finish();
+        }
+
+        SEQ_ONE_KEY (KC_2) {
+            // 凸(ツ)凸
+            unicode_input_start(); register_hex(0x51F8); unicode_input_finish();
+            register_code (KC_RSFT); tap_code16 (KC_8); unregister_code (KC_RSFT);
+            unicode_input_start (); register_hex(0x30c4); unicode_input_finish();
+            register_code (KC_RSFT); tap_code16 (KC_9); unregister_code (KC_RSFT);
+            unicode_input_start (); register_hex(0x51F8); unicode_input_finish();
+        }
+
+        /*  ", "    => LdrKey > " " */
+        SEQ_ONE_KEY(KC_SPC) {
+            SEND_STRING(", ");
+        }
+        /*  ". "    => LdrKey > " " > " " */
+        SEQ_TWO_KEYS(KC_SPC, KC_SPC) {
+            SEND_STRING(". ");
+        }
+        /*  `   => LdrKey > Escape */
+        SEQ_ONE_KEY(KC_GESC) {
+            SEND_STRING("`");
+        }
+        /*  ``` => LdrKey > Escape > Escape > Escape */
+        SEQ_THREE_KEYS(KC_GESC, KC_GESC, KC_GESC) {
+            SEND_STRING("```");
+        }
+
+        // Default sequences, so it's not loney here
         SEQ_ONE_KEY(KC_F) {
             // Anything you can do in a macro.
             SEND_STRING("QMK is awesome.");
-        }
-        SEQ_TWO_KEYS(KC_D, KC_D) {
-            SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
         }
         SEQ_THREE_KEYS(KC_D, KC_D, KC_S) {
             SEND_STRING("https://start.duckduckgo.com\n");
