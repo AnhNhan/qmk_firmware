@@ -17,9 +17,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "config_common.h"
+// #include "revc.h"
 
-#define AUTO_SHIFT_TIMEOUT 180
+// #define AUTO_SHIFT_TIMEOUT 180
 // #define NO_AUTO_SHIFT_SPECIAL
 
 #define LEADER_TIMEOUT 500
@@ -29,8 +29,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define VENDOR_ID    0x4335 // GEEKhack
 #define PRODUCT_ID   0x0001
 #define DEVICE_VER   0x0001
-#define MANUFACTURER    geekhack
-#define PRODUCT         GH60 Rev C
+// #define MANUFACTURER    geekhack
+// #define PRODUCT         GH60 Rev C
 #define DESCRIPTION     t.m.k. keyboard firmware for GH60
 
 /* key matrix size */
